@@ -1,0 +1,161 @@
+<!-- ==========================================
+     FILE 2: login.html
+     ========================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - HealthifyMe</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="login-container">
+        <!-- Left Side - Branding -->
+        <div class="login-left">
+            <h1>🏋️ HealthifyMe</h1>
+            <p>Your personal fitness companion for a healthier lifestyle</p>
+            <ul class="feature-list">
+                <li>Track calories & nutrition</li>
+                <li>AI-powered chatbot assistant</li>
+                <li>Personalized meal plans</li>
+                <li>Progress tracking & analytics</li>
+            </ul>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="login-right">
+            <h2>Welcome Back!</h2>
+            <p class="subtitle">Login to continue your fitness journey</p>
+
+            <div id="errorMessage" class="error-message"></div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        placeholder="your.email@example.com" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="Enter your password" 
+                        required
+                    >
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    Login
+                </button>
+            </form>
+
+            <div class="signup-link">
+                Don't have an account? <a href="signup.html">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Login Handler
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // Basic validation
+            if (!email || !password) {
+                showError('Please fill in all fields');
+                return;
+            }
+
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+
+            // Find user
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                // Success - Store session
+                const sessionData = {
+                    userId: user.id,
+                    username: user.username,
+                    email: user.email,
+                    loginTime: new Date().toISOString(),
+                    rememberMe: rememberMe
+                };
+
+                localStorage.setItem('healthifyMeSession', JSON.stringify(sessionData));
+
+                // Redirect to dashboard
+                window.location.href = 'dash.html';
+            } else {
+                // Failed login
+                showError('Invalid email or password');
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Check if already logged in
+        window.addEventListener('load', () => {
+            const session = localStorage.getItem('healthifyMeSession');
+            if (session) {
+                const sessionData = JSON.parse(session);
+                if (sessionData.rememberMe) {
+                    window.location.href = 'dash.html';
+                }
+            }
+        });
+
+        // Demo account notification
+        window.addEventListener('load', () => {
+            // Create demo account if doesn't exist
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            if (users.length === 0) {
+                const demoUser = {
+                    id: 1,
+                    username: 'Demo User',
+                    email: 'demo@healthifyme.com',
+                    password: 'demo123',
+                    age: 25,
+                    height: 170,
+                    weight: 70,
+                    goal: 'weight_loss',
+                    createdAt: new Date().toISOString()
+                };
+                users.push(demoUser);
+                localStorage.setItem('healthifyMeUsers', JSON.stringify(users));
+
+                console.log('Demo account created:', demoUser);
+            }
+        });
+    </script>
+</body>
+</html>
+

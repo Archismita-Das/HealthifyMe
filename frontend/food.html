@@ -1,0 +1,162 @@
+<!-- ==========================================
+     FILE 6: food.html
+     ========================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Search - HealthifyMe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h2>🏋️ HealthifyMe</h2></div>
+        <nav class="sidebar-nav">
+            <a href="dash.html" class="nav-link"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a>
+            <a href="bmi-calculator.html" class="nav-link"><span class="nav-icon">⚖️</span><span class="nav-text">BMI Calculator</span></a>
+            <a href="bmr-calculator.html" class="nav-link"><span class="nav-icon">🔥</span><span class="nav-text">BMR Calculator</span></a>
+            <a href="food.html" class="nav-link active"><span class="nav-icon">🍎</span><span class="nav-text">Food Search</span></a>
+            <a href="meal.html" class="nav-link"><span class="nav-icon">🍔</span><span class="nav-text">Log Meal</span></a>
+            <a href="water-tracker.html" class="nav-link"><span class="nav-icon">💧</span><span class="nav-text">Water Tracker</span></a>
+            <a href="weight-log.html" class="nav-link">
+        <span class="nav-icon">📈</span>
+        <span class="nav-text">Weight Log</span>
+    </a>
+            <a href="chatbot.html" class="nav-link"><span class="nav-icon">🤖</span><span class="nav-text">AI Chatbot</span></a>
+        </nav>
+        <div class="sidebar-footer"><button onclick="handleLogout()" class="btn-logout"><span>🚪</span> Logout</button></div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="greeting">
+                <h1>🍎 Food Search</h1>
+                <p>Search for food nutrition information</p>
+            </div>
+            <div class="user-profile">
+                <div class="theme-toggle" onclick="toggleTheme()"><span id="themeIcon">🌙</span></div>
+                <div class="user-avatar">👤</div>
+                <span id="username">User</span>
+            </div>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="form-container" style="max-width: 900px;">
+                <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                    <input type="text" id="searchInput" placeholder="Search for food (e.g., banana, paneer, chicken)..." 
+                           style="flex: 1; padding: 1rem; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem;"
+                           onkeypress="if(event.key==='Enter') searchFood()">
+                    <button onclick="searchFood()" class="btn btn-primary" style="padding: 1rem 2rem;">
+                        🔍 Search
+                    </button>
+                </div>
+
+                <div id="searchResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="script.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            checkAuth();
+            document.getElementById('searchInput').focus();
+        });
+
+        function checkAuth() {
+            const session = localStorage.getItem('healthifyMeSession');
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+            document.getElementById('username').textContent = JSON.parse(session).username;
+        }
+
+        let searching = false;
+        async function searchFood() {
+
+            if (searching) return; // prevent duplicate searches
+            searching = true;
+            
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                showToast('Please enter a food name', 'error');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = '<div style="text-align: center; padding: 2rem;"><div class="loading"></div><p>Searching...</p></div>';
+
+            try {
+                // Call Spring Boot API
+                const response = await fetch(`http://localhost:8081/api/foods/search?name=${encodeURIComponent(query)}`);
+                
+                if (!response.ok) throw new Error('Search failed');
+                
+                const foods = await response.json();
+                
+                if (foods && foods.length > 0) {
+                    let html = '<div style="display: grid; gap: 1rem;">';
+                    foods.forEach(food => {
+                        html += `
+                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3 style="color: var(--primary); margin-bottom: 0.5rem;">${food.foodName}</h3>
+                                    <p>${food.cuisine} • ${food.dietCategory} • ${food.type}</p>
+                                    <div style="display: flex; gap: 1rem; font-size: 0.9rem;">
+                                    <span>🔥 ${food.calories} cal</span>
+                                    <span>💪 ${food.protein}g protein</span>
+                                    <span>🍞 ${food.carbs}g carbs</span>
+                                    <span>🥑 ${food.fats}g fats</span>
+                                </div>
+
+                                </div>
+                                <button onclick="addToMeal('${food.foodName}', ${food.calories}, ${food.protein}, ${food.carbs}, ${food.fats})" class="btn btn-primary">
+                                Add to Meal
+                                </button>
+
+
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">🔍</div>
+                            <p>No results found for "${query}"</p>
+                            <p style="font-size: 0.9rem;">Try: banana, paneer, chicken, rice, oats</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                resultsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: var(--danger);">
+                        <p>❌ Search failed. Make sure the backend is running.</p>
+                    </div>
+                `;
+            }finally {
+            searching = false; // ✅ always reset
+    }
+        }
+
+        function addToMeal(foodName, calories, protein, carbs, fats) {
+    localStorage.setItem(
+        'selectedFood',
+        JSON.stringify({ foodName, calories, protein, carbs, fats })
+    );
+    showToast(`${foodName} selected! Redirecting to log meal...`, 'success');
+    setTimeout(() => {
+        window.location.href = 'meal.html';
+    }, 1500);
+}
+
+    </script>
+</body>
+</html>
+

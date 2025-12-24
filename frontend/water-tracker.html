@@ -1,0 +1,257 @@
+<!-- ==========================================
+     FILE 8: water-tracker.html
+     ========================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Tracker - HealthifyMe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h2>🏋️ HealthifyMe</h2></div>
+        <nav class="sidebar-nav">
+            <a href="dash.html" class="nav-link"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a>
+            <a href="bmi-calculator.html" class="nav-link"><span class="nav-icon">⚖️</span><span class="nav-text">BMI Calculator</span></a>
+            <a href="bmr-calculator.html" class="nav-link"><span class="nav-icon">🔥</span><span class="nav-text">BMR Calculator</span></a>
+            <a href="food.html" class="nav-link"><span class="nav-icon">🍎</span><span class="nav-text">Food Search</span></a>
+            <a href="meal.html" class="nav-link"><span class="nav-icon">🍔</span><span class="nav-text">Log Meal</span></a>
+            <a href="water-tracker.html" class="nav-link active"><span class="nav-icon">💧</span><span class="nav-text">Water Tracker</span></a>
+            <a href="weight-log.html" class="nav-link">
+        <span class="nav-icon">📈</span>
+        <span class="nav-text">Weight Log</span>
+    </a>
+            <a href="chatbot.html" class="nav-link"><span class="nav-icon">🤖</span><span class="nav-text">AI Chatbot</span></a>
+        </nav>
+        <div class="sidebar-footer"><button onclick="handleLogout()" class="btn-logout"><span>🚪</span> Logout</button></div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="greeting">
+                <h1>💧 Water Tracker</h1>
+                <p>Stay hydrated, stay healthy</p>
+            </div>
+            <div class="user-profile">
+                <div class="theme-toggle" onclick="toggleTheme()"><span id="themeIcon">🌙</span></div>
+                <div class="user-avatar">👤</div>
+                <span id="username">User</span>
+            </div>
+        </div>
+
+        <div class="dashboard-container">
+            <!-- Today's Water Intake -->
+            <div style="background: linear-gradient(135deg, #2196F3, #1976D2); color: white; padding: 3rem; border-radius: 20px; text-align: center; margin-bottom: 2rem; box-shadow: var(--shadow-lg);">
+                <h2 style="margin-bottom: 1rem;">Today's Water Intake</h2>
+                <div style="font-size: 4rem; font-weight: bold; margin: 1rem 0;" id="todayWater">0L</div>
+                <div style="font-size: 1.2rem; opacity: 0.9;">Goal: 3L per day</div>
+                <div style="width: 100%; max-width: 400px; height: 20px; background: rgba(255,255,255,0.3); border-radius: 10px; margin: 1.5rem auto; overflow: hidden;">
+                    <div id="waterProgress" style="height: 100%; background: white; width: 0%; transition: width 0.5s; border-radius: 10px;"></div>
+                </div>
+                <div id="hydrationStatus" style="font-size: 1.1rem; margin-top: 1rem;">💧 Keep going!</div>
+            </div>
+
+            <!-- Quick Add Buttons -->
+            <div style="background: var(--bg-card); padding: 2rem; border-radius: 16px; box-shadow: var(--shadow-md); margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">⚡ Quick Add Water</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                    <button onclick="addWater(0.25)" class="quick-water-btn">
+                        <div style="font-size: 2rem;">💧</div>
+                        <div>1 Glass</div>
+                        <small>(250ml)</small>
+                    </button>
+                    <button onclick="addWater(0.5)" class="quick-water-btn">
+                        <div style="font-size: 2rem;">💧💧</div>
+                        <div>2 Glasses</div>
+                        <small>(500ml)</small>
+                    </button>
+                    <button onclick="addWater(0.75)" class="quick-water-btn">
+                        <div style="font-size: 2rem;">🥤</div>
+                        <div>Bottle</div>
+                        <small>(750ml)</small>
+                    </button>
+                    <button onclick="addWater(1)" class="quick-water-btn">
+                        <div style="font-size: 2rem;">🚰</div>
+                        <div>1 Liter</div>
+                        <small>(1000ml)</small>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Amount -->
+            <div class="form-container">
+                <h3 style="margin-bottom: 1rem;">📝 Log Custom Amount</h3>
+                <form onsubmit="logCustomWater(event)" style="display: flex; gap: 1rem; align-items: end;">
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label for="customAmount">Amount (liters)</label>
+                        <input type="number" id="customAmount" placeholder="e.g., 0.5" step="0.1" min="0.1" max="5" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.9rem 2rem;">Add</button>
+                </form>
+            </div>
+
+            <!-- Hydration Tips -->
+            <div style="background: #e3f2fd; padding: 2rem; border-radius: 16px; margin-top: 2rem;">
+                <h3 style="color: #1565c0; margin-bottom: 1rem;">💡 Hydration Tips</h3>
+                <ul style="color: #1565c0; line-height: 2;">
+                    <li>Drink water first thing in the morning</li>
+                    <li>Keep a water bottle with you always</li>
+                    <li>Drink before, during, and after exercise</li>
+                    <li>Set reminders to drink water every hour</li>
+                    <li>Eat water-rich foods like cucumber and watermelon</li>
+                </ul>
+            </div>
+
+            <!-- Water History -->
+            <div style="background: var(--bg-card); padding: 2rem; border-radius: 16px; box-shadow: var(--shadow-md); margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">📊 7-Day History</h3>
+                <div id="waterHistory"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="script.js"></script>
+    <script>
+        let currentUser;
+
+        window.addEventListener('load', () => {
+            checkAuth();
+            updateWaterDisplay();
+            loadWaterHistory();
+        });
+
+        function checkAuth() {
+            const session = localStorage.getItem('healthifyMeSession');
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = JSON.parse(session);
+            document.getElementById('username').textContent = currentUser.username;
+        }
+
+        function addWater(liters) {
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            const userIndex = users.findIndex(u => u.id === currentUser.userId);
+            
+            if (userIndex !== -1) {
+                if (!users[userIndex].waterLogs) users[userIndex].waterLogs = [];
+                
+                const today = new Date().toISOString().split('T')[0];
+                const existingLog = users[userIndex].waterLogs.find(log => log.date === today);
+                
+                if (existingLog) {
+                    existingLog.liters += liters;
+                } else {
+                    users[userIndex].waterLogs.push({
+                        date: today,
+                        liters: liters,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                
+                localStorage.setItem('healthifyMeUsers', JSON.stringify(users));
+
+                localStorage.setItem('lastDashboardUpdate', Date.now());
+
+                updateWaterDisplay();
+                loadWaterHistory();
+                
+                showToast(`✅ Added ${liters}L of water!`, 'success');
+                
+                // Celebration animation if goal reached
+                const total = getTodayWater();
+                if (total >= 3 && (total - liters) < 3) {
+                    showToast('🎉 Congratulations! You reached your daily goal!', 'success');
+                }
+            }
+        }
+
+        function logCustomWater(event) {
+            event.preventDefault();
+            const amount = parseFloat(document.getElementById('customAmount').value);
+            addWater(amount);
+
+            // 🔄 Notify dashboard to refresh automatically
+            localStorage.setItem('lastDashboardUpdate', Date.now());
+            document.getElementById('customAmount').value = '';
+        }
+
+        function getTodayWater() {
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            const user = users.find(u => u.id === currentUser.userId);
+            
+            if (!user || !user.waterLogs) return 0;
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayLog = user.waterLogs.find(log => log.date === today);
+            
+            return todayLog ? todayLog.liters : 0;
+        }
+
+        function updateWaterDisplay() {
+            const total = getTodayWater();
+            const goal = 3;
+            const percentage = Math.min((total / goal) * 100, 100);
+            
+            document.getElementById('todayWater').textContent = total.toFixed(1) + 'L';
+            document.getElementById('waterProgress').style.width = percentage + '%';
+            
+            let status;
+            if (percentage < 30) {
+                status = '💧 Just getting started!';
+            } else if (percentage < 60) {
+                status = '💧💧 Good progress!';
+            } else if (percentage < 100) {
+                status = '💧💧💧 Almost there!';
+            } else {
+                status = '🎉 Goal achieved!';
+            }
+            document.getElementById('hydrationStatus').textContent = status;
+        }
+
+        function loadWaterHistory() {
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            const user = users.find(u => u.id === currentUser.userId);
+            
+            if (!user || !user.waterLogs) {
+                document.getElementById('waterHistory').innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No history yet</p>';
+                return;
+            }
+            
+            const last7Days = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                last7Days.push(date.toISOString().split('T')[0]);
+            }
+            
+            const historyHTML = last7Days.map(date => {
+                const log = user.waterLogs.find(l => l.date === date);
+                const liters = log ? log.liters : 0;
+                const percentage = Math.min((liters / 3) * 100, 100);
+                const dateObj = new Date(date);
+                const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
+                
+                return `
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div style="min-width: 60px; font-weight: 600;">${dayName}</div>
+                        <div style="flex: 1; height: 30px; background: var(--bg-light); border-radius: 15px; overflow: hidden; position: relative;">
+                            <div style="height: 100%; background: #2196F3; width: ${percentage}%; transition: width 0.5s;"></div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.85rem; font-weight: 600;">
+                                ${liters.toFixed(1)}L
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('waterHistory').innerHTML = historyHTML;
+        }
+    </script>
+</body>
+</html>

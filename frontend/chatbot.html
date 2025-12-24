@@ -1,0 +1,255 @@
+<!-- ==========================================
+     FILE 9: chatbot.html (UPDATED WITH THEME TOGGLE)
+     ========================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot - HealthifyMe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="chat-layout">
+        <!-- Sidebar -->
+        <div class="chat-sidebar">
+            <div class="sidebar-header">
+                <h2>🏋️ HealthifyMe</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dash.html" class="nav-link">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="bmi-calculator.html" class="nav-link">
+                    <span class="nav-icon">⚖️</span>
+                    <span class="nav-text">BMI Calculator</span>
+                </a>
+                <a href="bmr-calculator.html" class="nav-link">
+                    <span class="nav-icon">🔥</span>
+                    <span class="nav-text">BMR Calculator</span>
+                </a>
+                <a href="food.html" class="nav-link">
+                    <span class="nav-icon">🍎</span>
+                    <span class="nav-text">Food Search</span>
+                </a>
+                <a href="meal.html" class="nav-link">
+                    <span class="nav-icon">🍔</span>
+                    <span class="nav-text">Log Meal</span>
+                </a>
+                <a href="water-tracker.html" class="nav-link">
+                    <span class="nav-icon">💧</span>
+                    <span class="nav-text">Water Tracker</span>
+                </a>
+                <a href="weight-log.html" class="nav-link">
+        <span class="nav-icon">📈</span>
+        <span class="nav-text">Weight Log</span>
+    </a>
+                <a href="chatbot.html" class="nav-link active">
+                    <span class="nav-icon">🤖</span>
+                    <span class="nav-text">AI Chatbot</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="handleLogout()" class="btn-logout">
+                    <span>🚪</span> Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <div class="chat-container-full">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div>
+                        <h2 style="color: white;">🤖 AI Fitness Assistant</h2>
+                        <p style="margin: 0; opacity: 0.9; color: white;">Ask me anything about nutrition, diet, and fitness!</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div class="theme-toggle" onclick="toggleTheme()" style="width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s;">
+                            <span id="themeIcon" style="font-size: 1.5rem;">🌙</span>
+                        </div>
+                        <div id="connectionStatus" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Checking...</span>
+                        </div>
+                        <button onclick="clearChat()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                            Clear Chat
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Action Buttons -->
+                <div class="quick-actions-grid">
+                    <button class="quick-action-btn" onclick="sendQuick('How many calories in paneer?')">
+                        <div>🧀 <strong>Paneer Calories</strong></div>
+                        <small>Nutrition information</small>
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuick('Suggest vegan breakfast foods')">
+                        <div>🥗 <strong>Vegan Breakfast</strong></div>
+                        <small>Meal suggestions</small>
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuick('What is BMI?')">
+                        <div>📊 <strong>BMI Info</strong></div>
+                        <small>Body Mass Index</small>
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuick('How much water should I drink?')">
+                        <div>💧 <strong>Hydration</strong></div>
+                        <small>Daily water intake</small>
+                    </button>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages-area" id="chatMessages">
+                    <div class="message bot-message">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <p><strong>Hello! I'm your HealthifyMe AI assistant.</strong></p>
+                            <p>I can help you with:</p>
+                            <ul>
+                                <li>🍎 Food calories and nutrition</li>
+                                <li>🥗 Diet recommendations</li>
+                                <li>💧 Hydration tips</li>
+                                <li>🏃 Exercise suggestions</li>
+                                <li>📊 BMI & BMR calculations</li>
+                            </ul>
+                            <p>What would you like to know?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div id="typingIndicator" class="typing-indicator" style="display: none; padding: 0 2rem;">
+                    <span></span><span></span><span></span>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="chat-input-container">
+                    <div style="display: flex; gap: 1rem;">
+                        <input 
+                            type="text" 
+                            id="userInput" 
+                            placeholder="Type your message here..." 
+                            onkeypress="if(event.key==='Enter') sendMessage()"
+                        >
+                        <button onclick="sendMessage()" class="send-button">
+                            Send ➤
+                        </button>
+                    </div>
+                    <div class="input-hint">
+                        💡 Tip: Be specific for best results! Ask about specific foods or nutrition topics.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="script.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            checkAuth();
+            checkConnection();
+            document.getElementById('userInput').focus();
+        });
+
+        function checkAuth() {
+            const session = localStorage.getItem('healthifyMeSession');
+            if (!session) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        async function checkConnection() {
+            const statusDiv = document.getElementById('connectionStatus');
+            const dot = statusDiv.querySelector('.status-dot');
+            const text = statusDiv.querySelector('.status-text');
+            
+            try {
+                const response = await fetch('http://localhost:8081/api/test');
+                if (response.ok) {
+                    dot.style.background = '#4CAF50';
+                    text.textContent = 'Connected';
+                    dot.classList.add('online');
+                } else {
+                    throw new Error('Offline');
+                }
+            } catch (error) {
+                dot.style.background = '#f44336';
+                text.textContent = 'Backend Offline';
+                dot.classList.add('offline');
+            }
+        }
+
+        function sendQuick(message) {
+            document.getElementById('userInput').value = message;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage(message, 'user');
+            input.value = '';
+            showTyping();
+            
+            try {
+                const response = await fetch('http://localhost:8081/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                
+                hideTyping();
+                
+                if (!response.ok) throw new Error('Chat failed');
+                
+                const data = await response.json();
+                addMessage(data.reply || 'Sorry, I encountered an error.', 'bot');
+                
+            } catch (error) {
+                hideTyping();
+                addMessage('❌ Cannot connect to chatbot. Ensure Spring Boot (port 8081) and Flask (port 5000) are running.', 'bot');
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const avatar = sender === 'bot' ? '🤖' : '👤';
+            const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">${formatted}</div>
+            `;
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showTyping() {
+            document.getElementById('typingIndicator').style.display = 'flex';
+        }
+
+        function hideTyping() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function clearChat() {
+            if (confirm('Clear all messages?')) {
+                const welcome = document.querySelector('.bot-message').cloneNode(true);
+                document.getElementById('chatMessages').innerHTML = '';
+                document.getElementById('chatMessages').appendChild(welcome);
+            }
+        }
+    </script>
+</body>
+</html>
+

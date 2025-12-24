@@ -1,0 +1,191 @@
+<!-- ==========================================
+     FILE 3: signup.html
+     ========================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - HealthifyMe</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="signup-container">
+        <!-- Left Side -->
+        <div class="signup-left">
+            <h1>🏋️ HealthifyMe</h1>
+            <p>Join thousands of users on their journey to a healthier, fitter lifestyle.</p>
+            <p style="margin-top: 20px;">Start tracking your calories, get personalized meal plans, and chat with our AI fitness assistant!</p>
+        </div>
+
+        <!-- Right Side - Signup Form -->
+        <div class="signup-right">
+            <h2>Create Account</h2>
+            <p class="subtitle">Fill in your details to get started</p>
+
+            <div id="successMessage" class="success-message"></div>
+            <div id="errorMessage" class="error-message"></div>
+
+            <form id="signupForm" onsubmit="handleSignup(event)">
+                <!-- Personal Info -->
+                <div class="form-group">
+                    <label for="username">Full Name *</label>
+                    <input type="text" id="username" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" placeholder="john@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" placeholder="Minimum 6 characters" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" placeholder="Re-enter password" required>
+                </div>
+
+                <!-- Physical Details -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="age">Age *</label>
+                        <input type="number" id="age" placeholder="25" min="10" max="120" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Gender *</label>
+                        <select id="gender" required>
+                            <option value="">Select</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="height">Height (cm) *</label>
+                        <input type="number" id="height" placeholder="170" min="100" max="250" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight">Weight (kg) *</label>
+                        <input type="number" id="weight" placeholder="70" min="30" max="300" step="0.1" required>
+                    </div>
+                </div>
+
+                <!-- Goal -->
+                <div class="form-group">
+                    <label for="goal">Fitness Goal *</label>
+                    <select id="goal" required>
+                        <option value="">Select your goal</option>
+                        <option value="weight_loss">Weight Loss</option>
+                        <option value="muscle_gain">Muscle Gain</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="general_fitness">General Fitness</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-signup">Create Account</button>
+            </form>
+
+            <div class="login-link">
+                Already have an account? <a href="login.html">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleSignup(event) {
+            event.preventDefault();
+
+            // Get form values
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const age = parseInt(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
+            const height = parseInt(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const goal = document.getElementById('goal').value;
+
+            // Validation
+            if (password !== confirmPassword) {
+                showError('Passwords do not match!');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters!');
+                return;
+            }
+
+            // Get existing users
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+
+            // Check if email already exists
+            if (users.find(u => u.email === email)) {
+                showError('Email already registered! Please login.');
+                return;
+            }
+
+           // Create new user
+const newUser = {
+    id: Date.now(),
+    username,
+    email,
+    password, // In production, hash this!
+    age,
+    gender,
+    height,
+    weight,               // current (latest) weight
+    startingWeight: weight, // ✅ stores the very first weight permanently
+    goal,
+    createdAt: new Date().toISOString(),
+    meals: [],
+    waterLogs: [],
+    weightLogs: [],        // ✅ ensure it's initialized
+    progressLogs: []
+};
+
+
+            // Save user
+            users.push(newUser);
+            localStorage.setItem('healthifyMeUsers', JSON.stringify(users));
+
+            // Show success
+            showSuccess('Account created successfully! Redirecting to login...');
+
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 4000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        console.log("Script loaded");
+    </script>
+</body>
+</html>
+

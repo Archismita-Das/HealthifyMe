@@ -1,0 +1,50 @@
+# ============================================
+# HealthifyMe Flask Chatbot Dependencies
+# FILE: flask-chatbot/requirements.txt
+# ============================================
+
+# Install these in order after creating virtual environment:
+# python -m venv venv
+# venv\Scripts\activate (Windows) or source venv/bin/activate (Mac/Linux)
+# pip install -r requirements.txt
+# python -m spacy download en_core_web_sm
+
+# IMPORTANT NOTE FOR PYTHON 3.13+:
+# If you have Python 3.13.x, use the updated versions below
+# Python 3.13 requires newer package versions for compatibility
+
+# Web Framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Natural Language Processing
+# For Python 3.13+, use spacy 3.8.7 or higher
+spacy==3.8.2
+# After pip install, run: python -m spacy download en_core_web_sm
+
+# Spelling Correction
+textblob==0.18.0
+
+# Fuzzy String Matching for intent detection
+fuzzywuzzy==0.18.0
+python-Levenshtein==0.25.1
+
+# MySQL Database Connector
+mysql-connector-python==8.4.0
+
+# Optional but useful
+scikit-learn==1.5.2
+numpy==1.26.4
+
+# For better JSON handling
+python-dotenv==1.0.1
+
+# ============================================
+# ALTERNATIVE: If you still get errors, try this minimal setup:
+# ============================================
+# Flask==3.0.0
+# spacy==3.8.2
+# textblob==0.18.0
+# fuzzywuzzy==0.18.0
+# python-Levenshtein==0.25.1
+# mysql-connector-python==8.4.0

@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMR Calculator - HealthifyMe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar (same as BMI page) -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>🏋️ HealthifyMe</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dash.html" class="nav-link">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="bmi-calculator.html" class="nav-link">
+                <span class="nav-icon">⚖️</span>
+                <span class="nav-text">BMI Calculator</span>
+            </a>
+            <a href="bmr-calculator.html" class="nav-link active">
+                <span class="nav-icon">🔥</span>
+                <span class="nav-text">BMR Calculator</span>
+            </a>
+            <a href="food.html" class="nav-link">
+                <span class="nav-icon">🍎</span>
+                <span class="nav-text">Food Search</span>
+            </a>
+            <a href="meal.html" class="nav-link">
+                <span class="nav-icon">🍔</span>
+                <span class="nav-text">Log Meal</span>
+            </a>
+            <a href="water-tracker.html" class="nav-link">
+                <span class="nav-icon">💧</span>
+                <span class="nav-text">Water Tracker</span>
+            </a>
+            <a href="weight-log.html" class="nav-link">
+        <span class="nav-icon">📈</span>
+        <span class="nav-text">Weight Log</span>
+    </a>
+            <a href="chatbot.html" class="nav-link">
+                <span class="nav-icon">🤖</span>
+                <span class="nav-text">AI Chatbot</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <button onclick="handleLogout()" class="btn-logout">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-bar">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="greeting">
+                <h1>🔥 BMR Calculator</h1>
+                <p>Calculate your Basal Metabolic Rate</p>
+            </div>
+            <div class="user-profile">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <span id="themeIcon">🌙</span>
+                </div>
+                <div class="user-avatar">👤</div>
+                <span id="username">User</span>
+            </div>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="form-container">
+                <h2 style="margin-bottom: 1rem;">Calculate Your BMR</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                    Basal Metabolic Rate is the number of calories your body burns at rest to maintain vital functions.
+                </p>
+                
+                
+
+                <form id="bmrForm" onsubmit="calculateBMR(event)">
+
+                    <div class="form-group">
+                    <label for="weight">Weight (kg) *</label>
+                    <input type="number" id="weight" placeholder="70" min="1" required>
+                    </div>
+
+                    
+                    <div class="form-group">
+                        <label for="height">Height (cm) *</label>
+                        <input type="number" id="height" placeholder="170" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age">Age (years) *</label>
+                        <input type="number" id="age" placeholder="25" min="1" max="120" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Gender *</label>
+                        <select id="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Calculate BMR</button>
+                </form>
+
+                <!-- Result Display -->
+                <div id="result" style="margin-top: 2rem; display: none;">
+                    <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 12px;">
+                        <h3 style="text-align: center; margin-bottom: 1rem;">Your BMR Result</h3>
+                        <div style="text-align: center; font-size: 3rem; font-weight: bold; color: var(--primary);" id="bmrValue">
+                            0
+                        </div>
+                        <div style="text-align: center; color: var(--text-secondary); margin-top: 0.5rem;">
+                            calories/day at rest
+                        </div>
+
+                        <div style="margin-top: 2rem; padding: 1rem; background: white; border-radius: 8px;">
+                            <h4 style="margin-bottom: 1rem;">Daily Calorie Needs (TDEE)</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                Based on your activity level:
+                            </p>
+                            <div id="activityLevels"></div>
+                        </div>
+
+                        <div style="margin-top: 1rem; padding: 1rem; background: #e8f5e9; border-radius: 8px; color: #2e7d32;">
+                            <strong>💡 Tip:</strong> To lose weight, eat 500 calories below your TDEE. To gain weight, eat 300-500 above.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+    <script>
+        window.addEventListener('load', checkAuth);
+
+        function checkAuth() {
+            const session = localStorage.getItem('healthifyMeSession');
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+            const userData = JSON.parse(session);
+            document.getElementById('username').textContent = userData.username;
+        }
+
+        function calculateBMR(event) {
+            event.preventDefault();
+
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const age = parseInt(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
+
+            if (!weight || !height || !age || !gender) {
+                showToast('Please fill all fields!', 'error');
+                return;
+            }
+
+            // Mifflin-St Jeor Equation
+            let bmr;
+            if (gender === 'male') {
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+            } else {
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+            }
+
+            bmr = Math.round(bmr);
+
+            // Calculate TDEE for different activity levels
+            const activityLevels = [
+                { name: '🛋️ Sedentary', factor: 1.2, desc: 'Little or no exercise' },
+                { name: '🚶 Light Activity', factor: 1.375, desc: 'Exercise 1-3 days/week' },
+                { name: '🏃 Moderate', factor: 1.55, desc: 'Exercise 3-5 days/week' },
+                { name: '💪 Active', factor: 1.725, desc: 'Exercise 6-7 days/week' },
+                { name: '🏋️ Very Active', factor: 1.9, desc: 'Hard exercise daily + physical job' }
+            ];
+
+            document.getElementById('bmrValue').textContent = bmr;
+
+            let activityHTML = '';
+            activityLevels.forEach(level => {
+                const tdee = Math.round(bmr * level.factor);
+                activityHTML += `
+                    <div style="padding: 0.75rem; margin-bottom: 0.5rem; background: var(--bg-light); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${level.name}</strong>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">${level.desc}</div>
+                        </div>
+                        <div style="font-size: 1.3rem; font-weight: bold; color: var(--primary);">
+                            ${tdee} <small style="font-size: 0.7rem; color: var(--text-secondary);">cal</small>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('activityLevels').innerHTML = activityHTML;
+            document.getElementById('result').style.display = 'block';
+
+            showToast('BMR calculated successfully!', 'success');
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>

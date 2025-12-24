@@ -1,0 +1,207 @@
+<!-- ==========================================
+     FILE 4: bmi-calculator.html
+     ========================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator - HealthifyMe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>🏋️ HealthifyMe</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dash.html" class="nav-link">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="bmi-calculator.html" class="nav-link active">
+                <span class="nav-icon">⚖️</span>
+                <span class="nav-text">BMI Calculator</span>
+            </a>
+            <a href="bmr-calculator.html" class="nav-link">
+                <span class="nav-icon">🔥</span>
+                <span class="nav-text">BMR Calculator</span>
+            </a>
+            <a href="food.html" class="nav-link">
+                <span class="nav-icon">🍎</span>
+                <span class="nav-text">Food Search</span>
+            </a>
+            <a href="meal.html" class="nav-link">
+                <span class="nav-icon">🍔</span>
+                <span class="nav-text">Log Meal</span>
+            </a>
+            <a href="water-tracker.html" class="nav-link">
+                <span class="nav-icon">💧</span>
+                <span class="nav-text">Water Tracker</span>
+            </a>
+            <a href="chatbot.html" class="nav-link">
+                <span class="nav-icon">🤖</span>
+                <span class="nav-text">AI Chatbot</span>
+            </a>
+            <a href="weight-log.html" class="nav-link">
+        <span class="nav-icon">📈</span>
+        <span class="nav-text">Weight Log</span>
+    </a>
+        </nav>
+        <div class="sidebar-footer">
+            <button onclick="handleLogout()" class="btn-logout">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-bar">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="greeting">
+                <h1>⚖️ BMI Calculator</h1>
+                <p>Calculate your Body Mass Index</p>
+            </div>
+            <div class="user-profile">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <span id="themeIcon">🌙</span>
+                </div>
+                <div class="user-avatar">👤</div>
+                <span id="username">User</span>
+            </div>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="form-container">
+                <h2 style="margin-bottom: 1rem;">Calculate Your BMI</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                    Body Mass Index (BMI) is a measure of body fat based on height and weight.
+                </p>
+
+                <form id="bmiForm" onsubmit="calculateBMI(event)">
+                    <div class="form-group">
+                        <label for="weight">Weight (kg) *</label>
+                        <input type="number" id="weight" placeholder="70" step="0.1" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="height">Height (cm) *</label>
+                        <input type="number" id="height" placeholder="170" min="1" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Calculate BMI</button>
+                </form>
+
+                <!-- Result Display -->
+                <div id="result" style="margin-top: 2rem; display: none;">
+                    <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 12px;">
+                        <h3 style="text-align: center; margin-bottom: 1rem;">Your BMI Result</h3>
+                        <div style="text-align: center; font-size: 3rem; font-weight: bold; color: var(--primary);" id="bmiValue">
+                            0
+                        </div>
+                        <div style="text-align: center; font-size: 1.2rem; margin-top: 0.5rem;" id="bmiCategory">
+                            Normal
+                        </div>
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: white; border-radius: 8px;">
+                            <p style="margin-bottom: 0.5rem;"><strong>BMI Ranges:</strong></p>
+                            <ul style="list-style: none; padding: 0;">
+                                <li>▪️ Underweight: < 18.5</li>
+                                <li>▪️ Normal: 18.5 - 24.9</li>
+                                <li>▪️ Overweight: 25 - 29.9</li>
+                                <li>▪️ Obese: ≥ 30</li>
+                            </ul>
+                        </div>
+                        <div id="recommendation" style="margin-top: 1rem; padding: 1rem; background: #e3f2fd; border-radius: 8px; color: #1565c0;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BMI Chart -->
+                <div style="margin-top: 2rem; text-align: center;">
+                    <h3>BMI Scale</h3>
+                    <div style="display: flex; height: 30px; border-radius: 8px; overflow: hidden; margin-top: 1rem;">
+                        <div style="flex: 18.5; background: #2196F3; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">
+                            Under
+                        </div>
+                        <div style="flex: 6.4; background: #4CAF50; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">
+                            Normal
+                        </div>
+                        <div style="flex: 5; background: #FF9800; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">
+                            Over
+                        </div>
+                        <div style="flex: 10; background: #f44336; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">
+                            Obese
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+    <script>
+        window.addEventListener('load', checkAuth);
+
+        function checkAuth() {
+            const session = localStorage.getItem('healthifyMeSession');
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+            const userData = JSON.parse(session);
+            document.getElementById('username').textContent = userData.username;
+        }
+
+        function calculateBMI(event) {
+            event.preventDefault();
+
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+
+            if (!weight || !height || weight <= 0 || height <= 0) {
+                showToast('Please enter valid values!', 'error');
+                return;
+            }
+
+            const heightInMeters = height / 100;
+            const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+
+            let category, color, recommendation;
+            
+            if (bmi < 18.5) {
+                category = 'Underweight';
+                color = '#2196F3';
+                recommendation = '💡 You may need to gain weight. Consult with a healthcare provider for personalized advice.';
+            } else if (bmi >= 18.5 && bmi < 25) {
+                category = 'Normal Weight';
+                color = '#4CAF50';
+                recommendation = '✅ You have a healthy weight! Maintain it with balanced diet and regular exercise.';
+            } else if (bmi >= 25 && bmi < 30) {
+                category = 'Overweight';
+                color = '#FF9800';
+                recommendation = '⚠️ Consider losing weight through healthy eating and exercise. Small changes can make a big difference!';
+            } else {
+                category = 'Obese';
+                color = '#f44336';
+                recommendation = '🔴 Your health may be at risk. Please consult a healthcare provider for a weight management plan.';
+            }
+
+            document.getElementById('bmiValue').textContent = bmi;
+            document.getElementById('bmiValue').style.color = color;
+            document.getElementById('bmiCategory').textContent = category;
+            document.getElementById('bmiCategory').style.color = color;
+            document.getElementById('recommendation').innerHTML = recommendation;
+            document.getElementById('result').style.display = 'block';
+
+            showToast('BMI calculated successfully!', 'success');
+
+            // Smooth scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>

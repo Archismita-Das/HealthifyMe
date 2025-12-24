@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Meal - HealthifyMe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h2>🏋️ HealthifyMe</h2></div>
+        <nav class="sidebar-nav">
+            <a href="dash.html" class="nav-link"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a>
+            <a href="bmi-calculator.html" class="nav-link"><span class="nav-icon">⚖️</span><span class="nav-text">BMI Calculator</span></a>
+            <a href="bmr-calculator.html" class="nav-link"><span class="nav-icon">🔥</span><span class="nav-text">BMR Calculator</span></a>
+            <a href="food.html" class="nav-link"><span class="nav-icon">🍎</span><span class="nav-text">Food Search</span></a>
+            <a href="meal.html" class="nav-link active"><span class="nav-icon">📝</span><span class="nav-text">Log Meal</span></a>
+            <a href="water-tracker.html" class="nav-link"><span class="nav-icon">💧</span><span class="nav-text">Water Tracker</span></a>
+            <a href="weight-log.html" class="nav-link">
+        <span class="nav-icon">📈</span>
+        <span class="nav-text">Weight Log</span>
+    </a>
+            <a href="chatbot.html" class="nav-link"><span class="nav-icon">🤖</span><span class="nav-text">AI Chatbot</span></a>
+        </nav>
+        <div class="sidebar-footer"><button onclick="handleLogout()" class="btn-logout"><span>🚪</span> Logout</button></div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="greeting">
+                <h1>📝 Log Meal</h1>
+                <p>Track your food intake</p>
+            </div>
+            <div class="user-profile">
+                <div class="theme-toggle" onclick="toggleTheme()"><span id="themeIcon">🌙</span></div>
+                <div class="user-avatar">👤</div>
+                <span id="username">User</span>
+            </div>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="form-container">
+                <h2 style="margin-bottom: 1rem;">Log Your Meal</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                    Add a meal to track your daily calorie intake
+                </p>
+
+                <form id="mealForm" onsubmit="logMeal(event)">
+                    <div class="form-group">
+                        <label for="foodName">Food Name *</label>
+                        <input type="text" id="foodName" placeholder="e.g., Banana, Roti, Chicken" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="calories">Calories *</label>
+                        <input type="number" id="calories" placeholder="e.g., 105" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="protein">Protein (g)</label>
+                        <input type="number" id="protein" placeholder="Optional" step="0.1" min="0">
+                    </div>
+
+                    <div class="form-group">
+  <label for="carbs">Carbs (g)</label>
+  <input type="number" id="carbs" placeholder="Optional" step="0.1" min="0">
+</div>
+
+<div class="form-group">
+  <label for="fats">Fats (g)</label>
+  <input type="number" id="fats" placeholder="Optional" step="0.1" min="0">
+</div>
+
+
+                    <div class="form-group">
+                        <label for="mealType">Meal Type *</label>
+                        <select id="mealType" required>
+                            <option value="">Select Meal Type</option>
+                            <option value="breakfast">🌅 Breakfast</option>
+                            <option value="lunch">🌞 Lunch</option>
+                            <option value="dinner">🌙 Dinner</option>
+                            <option value="snack">🍪 Snack</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Date *</label>
+                        <input type="date" id="date" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Log Meal</button>
+                </form>
+
+                <div style="margin-top: 2rem; text-align: center;">
+                    <a href="food-search.html" style="color: var(--primary); text-decoration: none;">
+                        🔍 Search food database for nutrition info
+                    </a>
+                </div>
+            </div>
+
+            <!-- Today's Meals Summary -->
+            <div style="margin-top: 2rem; background: var(--bg-card); padding: 2rem; border-radius: 16px; box-shadow: var(--shadow-md);">
+                <h3 style="margin-bottom: 1rem;">📊 Today's Summary</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="text-align: center; padding: 1rem; background: var(--bg-light); border-radius: 12px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary);" id="todayCalories">0</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">Total Calories</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: var(--bg-light); border-radius: 12px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary);" id="todayProtein">0g</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">Total Protein</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: var(--bg-light); border-radius: 12px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary);" id="mealCount">0</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">Meals Logged</div>
+                    </div>
+                </div>
+                <div id="todayMealsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="script.js"></script>
+    <script>
+        let currentUser;
+
+        window.addEventListener('load', () => {
+            checkAuth();
+            setTodayDate();
+            loadSelectedFood();
+            updateTodaySummary();
+        });
+
+        function checkAuth() {
+            const session = localStorage.getItem('healthifyMeSession');
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = JSON.parse(session);
+            document.getElementById('username').textContent = currentUser.username;
+        }
+
+        function setTodayDate() {
+            document.getElementById('date').valueAsDate = new Date();
+        }
+
+        function loadSelectedFood() {
+    const selected = localStorage.getItem('selectedFood');
+    if (selected) {
+        const food = JSON.parse(selected);
+        document.getElementById('foodName').value = food.foodName;
+        document.getElementById('calories').value = food.calories;
+        if (food.protein) document.getElementById('protein').value = food.protein;
+        if (food.carbs) document.getElementById('carbs').value = food.carbs;
+        if (food.fats) document.getElementById('fats').value = food.fats;
+        localStorage.removeItem('selectedFood');
+    }
+}
+
+
+        function logMeal(event) {
+            event.preventDefault();
+
+           const mealData = {
+    id: Date.now(),
+    userId: currentUser.userId,
+    foodName: document.getElementById('foodName').value.trim(),
+    calories: parseInt(document.getElementById('calories').value),
+    protein: parseFloat(document.getElementById('protein').value) || 0,
+    carbs: parseFloat(document.getElementById('carbs').value) || 0,
+    fats: parseFloat(document.getElementById('fats').value) || 0,
+    mealType: document.getElementById('mealType').value,
+    date: document.getElementById('date').value,
+    timestamp: new Date().toISOString()
+};
+
+            // Get user's meals from localStorage
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            const userIndex = users.findIndex(u => u.id === currentUser.userId);
+            
+            if (userIndex !== -1) {
+                if (!users[userIndex].meals) users[userIndex].meals = [];
+                users[userIndex].meals.push(mealData);
+                localStorage.setItem('healthifyMeUsers', JSON.stringify(users));
+
+                // 🔄 Notify dashboard to refresh
+                localStorage.setItem('lastDashboardUpdate', Date.now());
+
+                showToast(`✅ ${mealData.foodName} logged successfully!`, 'success');
+
+                // Reset form
+                document.getElementById('mealForm').reset();
+                setTodayDate();
+
+                // Update summary
+                updateTodaySummary();
+
+                // Animate success
+                document.getElementById('mealForm').style.animation = 'fadeInUp 0.5s';
+            }
+        }
+
+        function updateTodaySummary() {
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            const user = users.find(u => u.id === currentUser.userId);
+            
+            if (!user || !user.meals) return;
+
+            const today = new Date().toISOString().split('T')[0];
+            const todayMeals = user.meals.filter(m => m.date === today);
+
+            const totalCalories = todayMeals.reduce((sum, m) => sum + m.calories, 0);
+            const totalProtein = todayMeals.reduce((sum, m) => sum + m.protein, 0);
+
+            document.getElementById('todayCalories').textContent = totalCalories;
+            document.getElementById('todayProtein').textContent = totalProtein.toFixed(1) + 'g';
+            document.getElementById('mealCount').textContent = todayMeals.length;
+
+            // Display meals list
+            const listDiv = document.getElementById('todayMealsList');
+            if (todayMeals.length === 0) {
+                listDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No meals logged today</p>';
+            } else {
+                listDiv.innerHTML = todayMeals.reverse().map(meal => `
+                    <div style="padding: 1rem; background: var(--bg-light); border-radius: 8px; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${meal.foodName}</strong>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary);">
+                                ${getMealIcon(meal.mealType)} ${meal.mealType} • ${meal.calories} cal • ${meal.protein}g protein • ${meal.carbs || 0}g C • ${meal.fats || 0}g F
+                            </div>
+                        </div>
+                        <button onclick="deleteMeal(${meal.id})" style="background: var(--danger); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+                            Delete
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function getMealIcon(type) {
+            const icons = { breakfast: '🌅', lunch: '🌞', dinner: '🌙', snack: '🍪' };
+            return icons[type] || '🍽️';
+        }
+
+        function deleteMeal(mealId) {
+            if (!confirm('Delete this meal?')) return;
+
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            const userIndex = users.findIndex(u => u.id === currentUser.userId);
+            
+            if (userIndex !== -1) {
+                users[userIndex].meals = users[userIndex].meals.filter(m => m.id !== mealId);
+                localStorage.setItem('healthifyMeUsers', JSON.stringify(users));
+
+                // 🔄 Notify dashboard to refresh
+                localStorage.setItem('lastDashboardUpdate', Date.now());
+                showToast('Meal deleted', 'success');
+                updateTodaySummary();
+            }
+        }
+    </script>
+</body>
+</html>

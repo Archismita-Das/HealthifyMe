@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthifyMe - Your Fitness Companion</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo"><h1>🏋️ HealthifyMe</h1></div>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="chatbot.html">Chatbot 💬</a></li>
+        <li id="authButton"><a href="login.html">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <h2 id="greeting">Welcome!</h2>
+    <p>Your personal fitness companion. Track calories, log meals, calculate BMI/BMR, and chat with our AI assistant!</p>
+    <button class="btn-large" id="getStartedBtn">Get Started</button>
+  </section>
+
+  <!-- FEATURES GRID -->
+  <section class="features-grid">
+    <div class="feature-card">
+      <h3>📊 BMI Calculator</h3>
+      <p>Check your Body Mass Index and understand your health better.</p>
+    </div>
+    <div class="feature-card">
+      <h3>🔥 BMR Calculator</h3>
+      <p>Calculate your Basal Metabolic Rate to manage your calorie needs.</p>
+    </div>
+    <div class="feature-card">
+      <h3>🍎 Food Search</h3>
+      <p>Search any food item and get detailed nutritional info.</p>
+    </div>
+    <div class="feature-card">
+      <h3>🍔 Log Meal</h3>
+      <p>Keep track of your meals and monitor daily calorie intake.</p>
+    </div>
+    <div class="feature-card">
+      <h3>💧 Water Tracker</h3>
+      <p>Log your water intake and stay hydrated throughout the day.</p>
+    </div>
+    <div class="feature-card">
+      <h3>💬 AI Chatbot</h3>
+      <p>Get personalized fitness advice with our AI-powered assistant.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h3>Ready to start your fitness journey?</h3>
+    <p>Login or Signup and take the first step towards a healthier you!</p>
+    <button class="btn-large" id="ctaButton">Get Started</button>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 HealthifyMe. Your fitness journey starts here!</p>
+  </footer>
+
+  <script>
+    // ====== DYNAMIC GREETING BASED ON TIME ======
+    function updateGreeting() {
+      const greetingEl = document.getElementById('greeting');
+      const now = new Date();
+      const hour = now.getHours();
+
+      let greeting = "Welcome!";
+      if(hour < 12) greeting = "Good Morning!";
+      else if(hour < 18) greeting = "Good Afternoon!";
+      else greeting = "Good Evening!";
+
+      // Check login
+      const session = JSON.parse(localStorage.getItem('healthifyMeSession') || 'null');
+      if(session && session.username){
+        greeting += ` ${session.username}`;
+      }
+
+      greetingEl.textContent = greeting;
+    }
+
+    // ====== NAVBAR LOGIN/LOGOUT ======
+    function updateNavbar() {
+      const authButton = document.getElementById('authButton');
+      const session = JSON.parse(localStorage.getItem('healthifyMeSession') || 'null');
+
+      if(session && session.username){
+        authButton.innerHTML = `<a href="#" onclick="logout()">Logout</a>`;
+      } else {
+        authButton.innerHTML = `<a href="login.html">Login</a>`;
+      }
+    }
+
+    // ====== GET STARTED BUTTON ======
+    document.getElementById('getStartedBtn').addEventListener('click', () => {
+      const session = JSON.parse(localStorage.getItem('healthifyMeSession') || 'null');
+      if(session && session.username){
+        window.location.href = 'dash.html';
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    document.getElementById('ctaButton').addEventListener('click', () => {
+      const session = JSON.parse(localStorage.getItem('healthifyMeSession') || 'null');
+      if(session && session.username){
+        window.location.href = 'dash.html';
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    // ====== LOGOUT FUNCTION ======
+    function logout(){
+      localStorage.removeItem('healthifyMeSession');
+      location.reload();
+    }
+
+    // Initialize
+    updateGreeting();
+    updateNavbar();
+  </script>
+</body>
+</html>
+
+

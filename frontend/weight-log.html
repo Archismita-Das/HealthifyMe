@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weight Tracker - HealthifyMe</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h2>🏋️ HealthifyMe</h2></div>
+        <nav class="sidebar-nav">
+            <a href="dash.html" class="nav-link"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a>
+            <a href="bmi-calculator.html" class="nav-link"><span class="nav-icon">⚖️</span><span class="nav-text">BMI Calculator</span></a>
+            <a href="bmr-calculator.html" class="nav-link"><span class="nav-icon">🔥</span><span class="nav-text">BMR Calculator</span></a>
+            <a href="food.html" class="nav-link"><span class="nav-icon">🍎</span><span class="nav-text">Food Search</span></a>
+            <a href="meal.html" class="nav-link"><span class="nav-icon">🍔</span><span class="nav-text">Log Meal</span></a>
+            <a href="water-tracker.html" class="nav-link"><span class="nav-icon">💧</span><span class="nav-text">Water Tracker</span></a>
+            <a href="weight-log.html" class="nav-link active"><span class="nav-icon">📈</span><span class="nav-text">Weight Log</span></a>
+            <a href="chatbot.html" class="nav-link"><span class="nav-icon">🤖</span><span class="nav-text">AI Chatbot</span></a>
+        </nav>
+        <div class="sidebar-footer"><button onclick="handleLogout()" class="btn-logout"><span>🚪</span> Logout</button></div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="greeting">
+                <h1>📈 Weight Tracker</h1>
+                <p>Monitor your weight progress</p>
+            </div>
+            <div class="user-profile">
+                <div class="theme-toggle" onclick="toggleTheme()"><span id="themeIcon">🌙</span></div>
+                <div class="user-avatar">👤</div>
+                <span id="username">User</span>
+            </div>
+        </div>
+
+        <div class="dashboard-container">
+            <!-- Current Weight Overview -->
+            <div style="background: linear-gradient(135deg, var(--accent), #ff8fab); color: white; padding: 3rem; border-radius: 20px; text-align: center; margin-bottom: 2rem; box-shadow: var(--shadow-lg); position: relative; overflow: hidden;">
+                <div style="position: relative; z-index: 1;">
+                    <h2 style="margin-bottom: 1rem; color: white;">Current Weight</h2>
+                    <div style="font-size: 4rem; font-weight: bold; margin: 1rem 0;" id="currentWeight">--</div>
+                    <div style="font-size: 1.2rem; opacity: 0.9;" id="weightChange">No data yet</div>
+                    <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                        <div>
+                            <div style="font-size: 1.5rem; font-weight: bold;" id="startWeight">--</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Starting Weight</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.5rem; font-weight: bold;" id="goalWeight">--</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Goal Weight</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.5rem; font-weight: bold;" id="totalChange">--</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Total Change</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log Weight Form -->
+            <div class="form-container">
+                <h3 style="margin-bottom: 1rem;">📝 Log Your Weight</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                    Track your weight regularly to monitor your progress
+                </p>
+
+                <form onsubmit="logWeight(event)" style="display: grid; gap: 1rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="weightInput">Weight (kg) *</label>
+                        <input type="number" id="weightInput" placeholder="e.g., 70.5" step="0.1" min="20" max="300" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="dateInput">Date *</label>
+                        <input type="date" id="dateInput" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="notes">Notes (Optional)</label>
+                        <textarea id="notes" placeholder="Add any notes about your progress..." rows="3" style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--border-radius-md); background: var(--bg-light); color: var(--text-primary); font-size: 1rem; transition: all var(--transition-normal); font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Log Weight</button>
+                </form>
+            </div>
+
+            <!-- Set Goal Weight -->
+            <div class="form-container" style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">🎯 Set Goal Weight</h3>
+                <form onsubmit="setGoalWeight(event)" style="display: flex; gap: 1rem; align-items: end;">
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label for="goalInput">Goal Weight (kg) *</label>
+                        <input type="number" id="goalInput" placeholder="e.g., 65" step="0.1" min="20" max="300" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.9rem 2rem;">Set Goal</button>
+                </form>
+            </div>
+
+            <!-- Weight Progress Chart -->
+            <div style="background: var(--bg-card); padding: 2rem; border-radius: 16px; box-shadow: var(--shadow-md); margin-top: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3>📊 Weight Progress Chart</h3>
+                    <select id="chartPeriod" onchange="updateWeightChart()" style="padding: 0.5rem 1rem; border: 2px solid var(--border-color); border-radius: var(--border-radius-md); background: var(--bg-light); color: var(--text-primary); font-weight: 600; cursor: pointer;">
+                        <option value="7">Last 7 Days</option>
+                        <option value="14">Last 14 Days</option>
+                        <option value="30" selected>Last 30 Days</option>
+                        <option value="90">Last 3 Months</option>
+                        <option value="all">All Time</option>
+                    </select>
+                </div>
+                <canvas id="weightProgressChart" style="max-height: 350px;"></canvas>
+            </div>
+
+            <!-- Weight History -->
+            <div style="background: var(--bg-card); padding: 2rem; border-radius: 16px; box-shadow: var(--shadow-md); margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">📋 Weight History</h3>
+                <div id="weightHistory"></div>
+            </div>
+
+            <!-- Tips Section -->
+            <div style="background: #e8f5e9; padding: 2rem; border-radius: 16px; margin-top: 2rem;">
+                <h3 style="color: #2e7d32; margin-bottom: 1rem;">💡 Weight Tracking Tips</h3>
+                <ul style="color: #2e7d32; line-height: 2;">
+                    <li>Weigh yourself at the same time each day, preferably in the morning</li>
+                    <li>Use the same scale for consistency</li>
+                    <li>Track weekly averages rather than daily fluctuations</li>
+                    <li>Weight can fluctuate 2-4 lbs daily due to water retention</li>
+                    <li>Take progress photos and measurements alongside weight</li>
+                    <li>Aim for 0.5-1 kg weight loss per week for healthy progress</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="script.js"></script>
+    <script>
+        let currentUser;
+        let weightChart;
+
+        window.addEventListener('load', () => {
+            checkAuth();
+            setTodayDate();
+            loadWeightData();
+            initializeWeightChart();
+        });
+
+        function checkAuth() {
+            const session = localStorage.getItem('healthifyMeSession');
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = JSON.parse(session);
+            document.getElementById('username').textContent = currentUser.username;
+        }
+
+        function setTodayDate() {
+            document.getElementById('dateInput').valueAsDate = new Date();
+        }
+
+        function logWeight(event) {
+            event.preventDefault();
+
+            const weight = parseFloat(document.getElementById('weightInput').value);
+            const date = document.getElementById('dateInput').value;
+            const notes = document.getElementById('notes').value.trim();
+
+            const weightLog = {
+                id: Date.now(),
+                userId: currentUser.userId,
+                weight: weight,
+                date: date,
+                notes: notes,
+                timestamp: new Date().toISOString()
+            };
+
+            // Get user data
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            const userIndex = users.findIndex(u => u.id === currentUser.userId);
+            
+            if (userIndex !== -1) {
+                if (!users[userIndex].weightLogs) users[userIndex].weightLogs = [];
+                
+                // Check if entry already exists for this date
+                const existingIndex = users[userIndex].weightLogs.findIndex(log => log.date === date);
+                if (existingIndex !== -1) {
+                    if (confirm('A weight entry already exists for this date. Do you want to update it?')) {
+                        users[userIndex].weightLogs[existingIndex] = weightLog;
+                    } else {
+                        return;
+                    }
+                } else {
+                    users[userIndex].weightLogs.push(weightLog);
+                }
+                
+                // If first-ever weight log, set startingWeight
+if (!users[userIndex].startingWeight) {
+    users[userIndex].startingWeight = weight;
+}
+
+// Update current weight to the new one
+users[userIndex].weight = weight;
+
+
+                
+                localStorage.setItem('healthifyMeUsers', JSON.stringify(users));
+
+                showToast(`✅ Weight logged: ${weight} kg`, 'success');
+
+                // Reset form
+                document.getElementById('weightInput').value = '';
+                document.getElementById('notes').value = '';
+                setTodayDate();
+
+                // Update display
+                loadWeightData();
+                updateWeightChart();
+            }
+        }
+
+        function setGoalWeight(event) {
+            event.preventDefault();
+
+            const goalWeight = parseFloat(document.getElementById('goalInput').value);
+
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            const userIndex = users.findIndex(u => u.id === currentUser.userId);
+            
+            if (userIndex !== -1) {
+                users[userIndex].goalWeight = goalWeight;
+                localStorage.setItem('healthifyMeUsers', JSON.stringify(users));
+
+                showToast(`🎯 Goal weight set: ${goalWeight} kg`, 'success');
+                
+                document.getElementById('goalInput').value = '';
+                loadWeightData();
+                updateWeightChart();
+            }
+        }
+
+        function loadWeightData() {
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            const user = users.find(u => u.id === currentUser.userId);
+
+            
+            if (!user) return;
+
+            // Keep currentUser synced with latest data
+localStorage.setItem('healthifyMeSession', JSON.stringify({
+    ...currentUser,
+    weight: user.weight
+}));
+currentUser = { ...currentUser, weight: user.weight };
+
+
+            const weightLogs = user.weightLogs || [];
+            const currentWeight = user.weight || '--';
+            const goalWeight = user.goalWeight || '--';
+
+            // Get starting weight (first log entry)
+            const sortedLogs = [...weightLogs].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const startWeight = user.startingWeight 
+    ? user.startingWeight 
+    : (sortedLogs.length > 0 ? sortedLogs[0].weight : currentWeight);
+
+
+
+            let weightChange = 'No data yet';
+let totalChange = '--';
+const latestWeight = sortedLogs.length > 0 ? sortedLogs[sortedLogs.length - 1].weight : currentWeight;
+
+// Show change from last log if there’s more than one
+if (sortedLogs.length > 1) {
+    const previousWeight = sortedLogs[sortedLogs.length - 2].weight;
+    const change = latestWeight - previousWeight;
+    
+    if (change > 0) {
+        weightChange = `📈 +${change.toFixed(1)} kg from last entry`;
+    } else if (change < 0) {
+        weightChange = `📉 ${change.toFixed(1)} kg from last entry`;
+    } else {
+        weightChange = '➡️ No change from last entry';
+    }
+}
+
+// Always show total change from startWeight, even if 1 entry
+if (sortedLogs.length > 0) {
+    const totalChangeVal = latestWeight - startWeight;
+    totalChange = totalChangeVal > 0 ? `+${totalChangeVal.toFixed(1)} kg` : `${totalChangeVal.toFixed(1)} kg`;
+}
+
+
+            // Update display
+            document.getElementById('currentWeight').textContent = currentWeight !== '--' ? currentWeight + ' kg' : '--';
+            document.getElementById('weightChange').textContent = weightChange;
+            document.getElementById('startWeight').textContent = startWeight !== '--' ? startWeight + ' kg' : '--';
+            document.getElementById('goalWeight').textContent = goalWeight !== '--' ? goalWeight + ' kg' : '--';
+            document.getElementById('totalChange').textContent = totalChange;
+
+            // Display weight history
+            displayWeightHistory(sortedLogs);
+        }
+
+        function displayWeightHistory(logs) {
+            const historyDiv = document.getElementById('weightHistory');
+            
+            if (logs.length === 0) {
+                historyDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No weight logs yet. Start tracking!</p>';
+                return;
+            }
+
+            const reversedLogs = [...logs].reverse();
+            
+            const historyHTML = reversedLogs.map(log => {
+                const date = new Date(log.date);
+                const formattedDate = date.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+                
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--bg-light); border-radius: 8px; margin-bottom: 0.5rem; border-left: 4px solid var(--primary);">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;">${formattedDate}</div>
+                            ${log.notes ? `<div style="font-size: 0.85rem; color: var(--text-secondary); font-style: italic;">${log.notes}</div>` : ''}
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">
+                                ${log.weight} kg
+                            </div>
+                            <button onclick="deleteWeight(${log.id})" style="background: var(--danger); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            historyDiv.innerHTML = historyHTML;
+        }
+
+        function deleteWeight(logId) {
+    if (!confirm('Delete this weight entry?')) return;
+
+    const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+    const userIndex = users.findIndex(u => u.id === currentUser.userId);
+
+    if (userIndex !== -1) {
+        let user = users[userIndex];
+
+        // Remove the selected log
+        user.weightLogs = (user.weightLogs || []).filter(log => log.id !== logId);
+
+        // Sort remaining logs by most recent
+        const sortedLogs = [...user.weightLogs].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (sortedLogs.length > 0) {
+            // If there are still logs, latest one becomes current weight
+            user.weight = sortedLogs[0].weight;
+        } else {
+            // If no logs remain, revert to the original starting weight
+            user.weight = user.startingWeight || '--';
+        }
+
+        // Save the updated user list
+        users[userIndex] = user;
+        localStorage.setItem('healthifyMeUsers', JSON.stringify(users));
+
+        showToast('Weight entry deleted', 'success');
+
+        // Refresh UI
+        loadWeightData();
+        updateWeightChart();
+    }
+}
+
+
+
+        function initializeWeightChart() {
+            const ctx = document.getElementById('weightProgressChart').getContext('2d');
+            weightChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Weight (kg)',
+                        data: [],
+                        borderColor: '#FF9800',
+                        backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Weight: ' + context.parsed.y + ' kg';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' kg';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            updateWeightChart();
+        }
+
+        function updateWeightChart() {
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            const user = users.find(u => u.id === currentUser.userId);
+            
+            if (!user || !user.weightLogs || user.weightLogs.length === 0) {
+                weightChart.data.labels = [];
+                weightChart.data.datasets[0].data = [];
+                weightChart.update();
+                return;
+            }
+
+            const period = document.getElementById('chartPeriod').value;
+            const sortedLogs = [...user.weightLogs].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            let filteredLogs = sortedLogs;
+            
+            if (period !== 'all') {
+                const days = parseInt(period);
+                const cutoffDate = new Date();
+                cutoffDate.setDate(cutoffDate.getDate() - days);
+                filteredLogs = sortedLogs.filter(log => new Date(log.date) >= cutoffDate);
+            }
+
+            const labels = filteredLogs.map(log => {
+                const date = new Date(log.date);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+            
+            const data = filteredLogs.map(log => log.weight);
+
+            weightChart.data.labels = labels;
+            weightChart.data.datasets[0].data = data;
+            
+            // Add goal line if set
+            if (user.goalWeight && weightChart.data.datasets.length === 1) {
+                weightChart.data.datasets.push({
+                    label: 'Goal',
+                    data: new Array(labels.length).fill(user.goalWeight),
+                    borderColor: '#4CAF50',
+                    borderDash: [5, 5],
+                    fill: false,
+                    pointRadius: 0
+                });
+            } else if (user.goalWeight && weightChart.data.datasets.length === 2) {
+                weightChart.data.datasets[1].data = new Array(labels.length).fill(user.goalWeight);
+            }
+
+            weightChart.update();
+        }
+    </script>
+</body>
+</html>

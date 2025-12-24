@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - HealthifyMe</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>🏋️ HealthifyMe</h2>
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link active">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Home</span>
+            </a>
+            <a href="bmi-calculator.html" class="nav-link">
+                <span class="nav-icon">⚖️</span>
+                <span class="nav-text">BMI Calculator</span>
+            </a>
+            <a href="bmr-calculator.html" class="nav-link">
+                <span class="nav-icon">🔥</span>
+                <span class="nav-text">BMR Calculator</span>
+            </a>
+            <a href="food.html" class="nav-link">
+                <span class="nav-icon">🍎</span>
+                <span class="nav-text">Food Search</span>
+            </a>
+            <a href="meal.html" class="nav-link">
+                <span class="nav-icon">📝</span>
+                <span class="nav-text">Log Meal</span>
+            </a>
+            <a href="water-tracker.html" class="nav-link">
+                <span class="nav-icon">💧</span>
+                <span class="nav-text">Water Tracker</span>
+            </a>
+
+            <a href="weight-log.html" class="nav-link">
+            <span class="nav-icon">📈</span>
+            <span class="nav-text">Weight Log</span>
+            </a>
+            <a href="chatbot.html" class="nav-link">
+                <span class="nav-icon">🤖</span>
+                <span class="nav-text">AI Chatbot</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <button onclick="handleLogout()" class="btn-logout">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="greeting">
+                <h1 id="greetingText">Good Morning, User!</h1>
+                <p id="motivationalQuote">Keep up the great work!</p>
+            </div>
+            <div class="user-profile">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <span id="themeIcon">🌙</span>
+                </div>
+                <div class="user-avatar" id="userAvatar">👤</div>
+                <span id="username">User</span>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-container">
+            <!-- Quick Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card calories">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-content">
+                        <h3>Calories Today</h3>
+                        <p class="stat-value" id="todayCalories">0</p>
+                        <small id="calorieGoal">of 2000 kcal goal</small>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="calorieProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card protein">
+                    <div class="stat-icon">💪</div>
+                    <div class="stat-content">
+                        <h3>Protein Intake</h3>
+                        <p class="stat-value" id="todayProtein">0g</p>
+                        <small>of 150g goal</small>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="proteinProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card carbs">
+  <div class="stat-icon">🍞</div>
+  <div class="stat-content">
+    <h3>Carbs Intake</h3>
+    <p class="stat-value" id="todayCarbs">0g</p>
+    <small>of 250g goal</small>
+    <div class="progress-bar">
+      <div class="progress-fill" id="carbsProgress" style="width: 0%"></div>
+    </div>
+  </div>
+</div>
+
+<div class="stat-card fats">
+  <div class="stat-icon">🥑</div>
+  <div class="stat-content">
+    <h3>Fats Intake</h3>
+    <p class="stat-value" id="todayFats">0g</p>
+    <small>of 70g goal</small>
+    <div class="progress-bar">
+      <div class="progress-fill" id="fatsProgress" style="width: 0%"></div>
+    </div>
+  </div>
+</div>
+
+
+                <div class="stat-card water">
+                    <div class="stat-icon">💧</div>
+                    <div class="stat-content">
+                        <h3>Water Intake</h3>
+                        <p class="stat-value" id="todayWater">0L</p>
+                        <small>of 3L goal</small>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="waterProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card weight">
+                    <div class="stat-icon">⚖️</div>
+                    <div class="stat-content">
+                        <h3>Current Weight</h3>
+                        <p class="stat-value" id="currentWeight">--</p>
+                        <small id="weightChange">No change</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streak & Achievements -->
+            <div class="achievement-section">
+                <div class="streak-card">
+                    <div class="streak-icon">🔥</div>
+                    <div class="streak-content">
+                        <h3>Current Streak</h3>
+                        <p class="streak-days" id="streakDays">0 Days</p>
+                        <small>Keep logging to maintain your streak!</small>
+                    </div>
+                </div>
+                
+                <div class="badges-card">
+                    <h3>🏆 Achievements</h3>
+                    <div class="badges-grid" id="badgesGrid">
+                        <div class="badge locked" title="Log 7 consecutive days">
+                            <span>🌟</span>
+                            <small>7 Day Streak</small>
+                        </div>
+                        <div class="badge locked" title="Log 100 meals">
+                            <span>📝</span>
+                            <small>Meal Master</small>
+                        </div>
+                        <div class="badge locked" title="Drink 3L water 10 days">
+                            <span>💧</span>
+                            <small>Hydration Hero</small>
+                        </div>
+                        <div class="badge locked" title="Reach your goal weight">
+                            <span>🎯</span>
+                            <small>Goal Crusher</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <!-- Calories Trend Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>📈 Weekly Calorie Trend</h3>
+                        <select id="caloriePeriod" onchange="updateCalorieChart()">
+                            <option value="7">Last 7 Days</option>
+                            <option value="14">Last 14 Days</option>
+                            <option value="30">Last 30 Days</option>
+                        </select>
+                    </div>
+                    <canvas id="calorieChart"></canvas>
+                </div>
+
+                <!-- Macro Distribution -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>🥗 Macro Distribution</h3>
+                    </div>
+                    <canvas id="macroChart"></canvas>
+                </div>
+
+                <!-- Water Intake Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>💧 Water Intake (7 Days)</h3>
+                    </div>
+                    <canvas id="waterChart"></canvas>
+                </div>
+
+                <!-- Weight Progress -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>⚖️ Weight Progress</h3>
+                    </div>
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3>⚡ Quick Actions</h3>
+                <div class="action-buttons">
+                    <a href="meal.html" class="action-btn">
+                        <span>📝</span>
+                        Log Meal
+                    </a>
+                    <a href="water-tracker.html" class="action-btn">
+                        <span>💧</span>
+                        Log Water
+                    </a>
+                    <a href="food.html" class="action-btn">
+                        <span>🔍</span>
+                        Search Food
+                    </a>
+                    <a href="chatbot.html" class="action-btn">
+                        <span>🤖</span>
+                        Ask Chatbot
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Meals -->
+            <div class="recent-section">
+                <h3>🍽️ Recent Meals</h3>
+                <div id="recentMeals" class="meals-list">
+                    <p class="empty-state">No meals logged today. Start tracking!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize dashboard on load
+        window.addEventListener('load', () => {
+            checkAuthentication();
+            loadUserData();
+            updateGreeting();
+            initializeCharts();
+            loadDashboardData();
+            updateMotivationalQuote();
+        });
+
+        // Check if user is logged in
+        function checkAuthentication() {
+            const session = localStorage.getItem('healthifyMeSession');
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+            const userData = JSON.parse(session);
+            document.getElementById('username').textContent = userData.username;
+        }
+
+        // Dynamic greeting based on time
+        function updateGreeting() {
+            const session = JSON.parse(localStorage.getItem('healthifyMeSession'));
+            const username = session.username.split(' ')[0];
+            const hour = new Date().getHours();
+            let greeting;
+
+            if (hour < 12) greeting = 'Good Morning';
+            else if (hour < 18) greeting = 'Good Afternoon';
+            else greeting = 'Good Evening';
+
+            document.getElementById('greetingText').textContent = `${greeting}, ${username}!`;
+        }
+
+        // Motivational quotes
+        function updateMotivationalQuote() {
+            const quotes = [
+                "Every meal is a chance to fuel your goals!",
+                "Progress, not perfection!",
+                "You're one workout away from a good mood!",
+                "Stay committed to your journey!",
+                "Small steps lead to big changes!",
+                "Your body can do it, it's your mind you have to convince!",
+                "Success is the sum of small efforts repeated daily!"
+            ];
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('motivationalQuote').textContent = randomQuote;
+        }
+
+
+        // initialize charts
+        function initializeCharts() {
+    const session = JSON.parse(localStorage.getItem('healthifyMeSession'));
+    const userData = getUserData(session.userId);
+    const today = new Date().toISOString().split('T')[0];
+
+    // =============== 📈 Weekly Calorie Trend ===============
+    const past7Days = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        return d.toISOString().split('T')[0];
+    });
+
+    const calorieTotals = past7Days.map(date => {
+        const meals = userData.meals?.filter(m => m.date === date) || [];
+        return meals.reduce((sum, m) => sum + (m.calories || 0), 0);
+    });
+
+    const calorieCtx = document.getElementById('calorieChart').getContext('2d');
+    calorieChart = new Chart(calorieCtx, {
+        type: 'line',
+        data: {
+            labels: past7Days.map(d => new Date(d).toLocaleDateString('en-US', { weekday: 'short' })),
+            datasets: [{
+                label: 'Calories',
+                data: calorieTotals,
+                borderColor: '#4CAF50',
+                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, suggestedMax: 2500 } }
+        }
+    });
+
+    // =============== 🥗 Macro Distribution ===============
+    const todayMeals = userData.meals?.filter(m => m.date === today) || [];
+    const totalProtein = todayMeals.reduce((s, m) => s + (m.protein || 0), 0);
+    const totalCarbs = todayMeals.reduce((s, m) => s + (m.carbs || 0), 0);
+    const totalFats = todayMeals.reduce((s, m) => s + (m.fats || 0), 0);
+
+    const macroCtx = document.getElementById('macroChart').getContext('2d');
+    macroChart = new Chart(macroCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Protein', 'Carbs', 'Fats'],
+            datasets: [{
+                data: [totalProtein, totalCarbs, totalFats],
+                backgroundColor: ['#4CAF50', '#2196F3', '#FF9800']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: ctx => `${ctx.label}: ${ctx.parsed.toFixed(1)}g`
+                    }
+                }
+            }
+        }
+    });
+
+    // =============== 💧 Water Intake (Today Only) ===============
+    const todayWaterLogs = userData.waterLogs?.filter(w => w.date === today) || [];
+    const totalWaterToday = todayWaterLogs.reduce((sum, log) => sum + (log.amount || 0), 0);
+
+    const waterCtx = document.getElementById('waterChart').getContext('2d');
+    waterChart = new Chart(waterCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Today'],
+            datasets: [{
+                label: 'Liters',
+                data: [totalWaterToday],
+                backgroundColor: '#2196F3'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 4,
+                    ticks: { stepSize: 0.5 }
+                }
+            }
+        }
+    });
+
+    // =============== ⚖️ Weight Progress ===============
+    const weightLogs = userData.weightLogs || [];
+    const sortedWeights = weightLogs.sort((a, b) => new Date(a.date) - new Date(b.date));
+    const weightLabels = sortedWeights.map(w => new Date(w.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    const weightValues = sortedWeights.map(w => w.weight);
+
+    const weightCtx = document.getElementById('weightChart').getContext('2d');
+    weightChart = new Chart(weightCtx, {
+        type: 'line',
+        data: {
+            labels: weightLabels.length ? weightLabels : ['No data'],
+            datasets: [{
+                label: 'Weight (kg)',
+                data: weightValues.length ? weightValues : [0],
+                borderColor: '#FF9800',
+                backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: false } }
+        }
+    });
+}
+
+
+        // Load user-specific dashboard data
+        function loadDashboardData() {
+            const session = JSON.parse(localStorage.getItem('healthifyMeSession'));
+            const userId = session.userId;
+            
+            // Get user's meals for today
+            const userData = getUserData(userId);
+            const today = new Date().toISOString().split('T')[0];
+            const todayMeals = userData.meals.filter(m => m.date === today);
+            
+            // Calculate totals
+            const totalCalories = todayMeals.reduce((sum, m) => sum + m.calories, 0);
+            const totalProtein = todayMeals.reduce((sum, m) => sum + (m.protein || 0), 0);
+            const totalCarbs = todayMeals.reduce((sum, m) => sum + (m.carbs || 0), 0);
+            const totalFats = todayMeals.reduce((sum, m) => sum + (m.fats || 0), 0);
+
+            
+            // Update display
+            document.getElementById('todayCalories').textContent = totalCalories;
+document.getElementById('todayProtein').textContent = totalProtein + 'g';
+document.getElementById('todayCarbs').textContent = totalCarbs + 'g';
+document.getElementById('todayFats').textContent = totalFats + 'g';
+
+            // Update progress bars
+            updateProgressBar('calorieProgress', totalCalories, 2000);
+updateProgressBar('proteinProgress', totalProtein, 150);
+updateProgressBar('carbsProgress', totalCarbs, 250);
+updateProgressBar('fatsProgress', totalFats, 70);
+
+            // Display recent meals
+            displayRecentMeals(todayMeals);
+
+            // ===== Water Intake =====
+           let todayWater = 0;
+           if (userData.waterLogs && userData.waterLogs.length > 0) {
+           const todayLog = userData.waterLogs.find(w => w.date === today);
+           todayWater = todayLog ? todayLog.liters : 0;
+    }
+
+    document.getElementById('todayWater').textContent = todayWater.toFixed(1) + 'L';
+    updateProgressBar('waterProgress', todayWater, 3);
+
+    // ===== Weight Section =====
+if (userData.weightLogs && userData.weightLogs.length > 0) {
+    const sortedWeights = [...userData.weightLogs].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const latestWeight = sortedWeights[sortedWeights.length - 1].weight;
+    const previousWeight = sortedWeights.length > 1 ? sortedWeights[sortedWeights.length - 2].weight : latestWeight;
+
+    // Update current weight display
+    document.getElementById('currentWeight').textContent = latestWeight.toFixed(1) + ' kg';
+
+    // Calculate change
+    const change = latestWeight - previousWeight;
+    const changeText =
+        change > 0 ? `▲ +${change.toFixed(1)} kg` :
+        change < 0 ? `▼ ${change.toFixed(1)} kg` :
+        `No change`;
+
+    document.getElementById('weightChange').textContent = changeText;
+    document.getElementById('weightChange').style.color =
+        change > 0 ? 'red' : change < 0 ? 'green' : 'gray';
+} else {
+    document.getElementById('currentWeight').textContent = '--';
+    document.getElementById('weightChange').textContent = 'No change';
+}
+
+        }
+
+        function updateProgressBar(id, current, goal) {
+            const percentage = Math.min((current / goal) * 100, 100);
+            document.getElementById(id).style.width = percentage + '%';
+        }
+
+        function displayRecentMeals(meals) {
+            const container = document.getElementById('recentMeals');
+            if (meals.length === 0) {
+                container.innerHTML = '<p class="empty-state">No meals logged today. Start tracking!</p>';
+                return;
+            }
+            
+            container.innerHTML = meals.slice(-5).reverse().map(meal => `
+                <div class="meal-item">
+                    <span class="meal-icon">${getMealIcon(meal.mealType)}</span>
+                    <div class="meal-info">
+                        <strong>${meal.foodName}</strong>
+                        <small>${meal.mealType} • ${meal.calories} cal</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getMealIcon(type) {
+            const icons = {
+                breakfast: '🌅',
+                lunch: '🌞',
+                dinner: '🌙',
+                snack: '🍪'
+            };
+            return icons[type] || '🍽️';
+        }
+
+        function getUserData(userId) {
+            const users = JSON.parse(localStorage.getItem('healthifyMeUsers') || '[]');
+            return users.find(u => u.id === userId) || { meals: [], waterLogs: [] };
+        }
+
+        // 🔄 Refresh dashboard data & charts when logs change
+function refreshDashboard() {
+    loadDashboardData(); // refresh top stats and progress bars
+
+    // Destroy old charts before reinitializing (prevents duplicates)
+    if (calorieChart) calorieChart.destroy();
+    if (macroChart) macroChart.destroy();
+    if (waterChart) waterChart.destroy();
+    if (weightChart) weightChart.destroy();
+
+    // Recreate all charts with latest data
+    initializeCharts();
+}
+
+// 🧠 Auto-refresh when user logs new meals, water, or weight (even in other tabs)
+window.addEventListener('storage', (event) => {
+    if (['healthifyMeUsers', 'mealLogs', 'waterLogs', 'weightLogs'].includes(event.key)) {
+        refreshDashboard();
+    }
+});
+
+    </script>
+</body>
+</html>
